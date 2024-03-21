@@ -9,23 +9,27 @@ content.appendChild(test);
 
 const todo = document.createElement("form");
 
-const titleInput = document.createElement("input");
-const titleLabel = document.createElement("label");
-titleInput.id = "title-input";
-titleLabel.for = "title-input";
-titleLabel.textContent = "Todo name";
+function createInputAndLabel(id, text) {
+  const input = document.createElement("input");
+  const label = document.createElement("label");
+  input.id = id;
+  label.htmlFor = id;
+  label.textContent = text;
+  return [input, label];
+}
 
-const descriptionInput = document.createElement("input");
-const descriptionLabel = document.createElement("label");
-descriptionInput.id = "description-input";
-descriptionLabel.for = "description--input";
-descriptionLabel.textContent = "Todo description";
-
-const dueDateInput = document.createElement("input");
-const dueDateLabel = document.createElement("label");
-dueDateInput.id = "due-date-input";
-dueDateLabel.for = "due-date-input";
-dueDateLabel.textContent = "Todo due date";
+const [titleInput, titleLabel] = createInputAndLabel(
+  "title-input",
+  "Todo name"
+);
+const [descriptionInput, descriptionLabel] = createInputAndLabel(
+  "description-input",
+  "Todo description"
+);
+const [dueDateInput, dueDateLabel] = createInputAndLabel(
+  "due-date-input",
+  "Todo due date"
+);
 
 const checkMarkerInput = document.createElement("input");
 checkMarkerInput.type = "radio";
