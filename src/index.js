@@ -1,74 +1,17 @@
 import "./style.css";
+import newTodo from "./components/newTodo";
 
 const content = document.querySelector(".content");
 
 const test = document.createElement("h1");
 test.textContent = "This is a test";
-
 content.appendChild(test);
 
-const todo = document.createElement("form");
-
-function createInputAndLabel(id, text) {
-  const input = document.createElement("input");
-  const label = document.createElement("label");
-  input.id = id;
-  label.htmlFor = id;
-  label.textContent = text;
-  return [input, label];
-}
-
-const [titleInput, titleLabel] = createInputAndLabel(
-  "title-input",
-  "Todo name"
-);
-const [descriptionInput, descriptionLabel] = createInputAndLabel(
-  "description-input",
-  "Todo description"
-);
-const [dueDateInput, dueDateLabel] = createInputAndLabel(
-  "due-date-input",
-  "Todo due date"
-);
-
-const checkMarkerInput = document.createElement("input");
-checkMarkerInput.type = "radio";
-const checkMarkerLabel = document.createElement("label");
+newTodo();
 
 const todoContainer = document.createElement("div");
 todoContainer.className = "todo-container";
-
-todo.appendChild(titleInput);
-todo.appendChild(titleLabel);
-
-todo.appendChild(descriptionInput);
-todo.appendChild(descriptionLabel);
-
-todo.appendChild(dueDateInput);
-todo.appendChild(dueDateLabel);
-
-todo.appendChild(checkMarkerInput);
-todo.appendChild(checkMarkerLabel);
-
-todo.appendChild(todoContainer);
-
-content.appendChild(todo);
-
-const button = document.createElement("button");
-button.type = "submit";
-button.className = "submit-form";
-button.textContent = "New todo";
-button.addEventListener("click", createTodo);
-
-content.appendChild(button);
-
-class todoClass {
-  constructor(tittle, description, dueDate) {
-    this.tittle = tittle;
-    this.description = description;
-    this.dueDate = dueDate;
-  }
-}
+content.appendChild(todoContainer);
 
 let todoList = [];
 function initialTodo() {
@@ -78,10 +21,25 @@ function initialTodo() {
 }
 initialTodo();
 
-displayTodo();
+// button add todo
+const dueDateInput = document.querySelector("#due-date-input");
+const titleInput = document.querySelector("#title-input");
+const descriptionInput = document.querySelector("#description-input");
+
+class todoClass {
+  constructor(tittle, description, dueDate) {
+    this.tittle = tittle;
+    this.description = description;
+    this.dueDate = dueDate;
+  }
+}
 
 function createTodo() {
-  const todo = new todoClass(titleInput.value, descriptionInput.value, "10/09");
+  const todo = new todoClass(
+    titleInput.value,
+    descriptionInput.value,
+    dueDateInput.value
+  );
 
   todoList.push(todo);
   localStorage.setItem("todoList", JSON.stringify(todoList));
@@ -89,7 +47,12 @@ function createTodo() {
   displayTodo();
   titleInput.value = "";
   descriptionInput.value = "";
+  dueDateInput.value = "";
 }
+
+const button = document.querySelector(".submit-form");
+button.addEventListener("click", createTodo);
+// ------------------------------
 
 function displayTodo() {
   while (todoContainer.firstChild) {
@@ -116,6 +79,8 @@ function displayTodo() {
     todoContainer.appendChild(newTodo);
   });
 }
+
+displayTodo();
 
 function deleteTodo(index) {
   const newTodoList = todoList.filter((_, todoIndex) => todoIndex !== index);
