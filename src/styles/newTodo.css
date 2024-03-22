@@ -1,0 +1,42 @@
+.todo-form {
+	display: flex;
+	flex-direction: column;
+	margin: auto;
+	height: 400px;
+	width: 35%;
+}
+
+.todo-form label {
+	margin: 24px 0 8px 0;
+	font-size: 1.5rem;
+}
+
+#title-input {
+    width: 100%;
+	height: 1.5rem;
+	color: white;
+}
+
+#description-input {
+    width: 100%;
+	height: 6rem;
+	color: white;
+    resize: none;
+}
+
+.dueDate {
+    width: 100%;
+	display: flex;
+}
+
+.dueDate input {
+    width: 100%;
+	height: 1.5rem;
+}
+
+#title-input, #description-input, #due-date-input {
+	-webkit-appearance: none;
+	border-radius: 3px;
+	background-color: #1e1e1e;
+	border: 1px solid rgb(107, 125, 139);
+}
