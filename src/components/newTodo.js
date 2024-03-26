@@ -21,8 +21,9 @@ export default function newTodo() {
   );
   const [dueDateInput, dueDateLabel] = createInputAndLabel(
     "due-date-input",
-    "Todo due date"
+    "Due date"
   );
+  dueDateInput.type = "date";
 
   const descriptionInput = document.createElement("textarea");
   descriptionInput.id = "description-input";
@@ -36,19 +37,42 @@ export default function newTodo() {
 
   titleInput.placeholder = "Enter the name of the todo";
   descriptionInput.placeholder = "Enter the description of the todo";
-  dueDateInput.placeholder = "Enter the due date of the todo";
 
+  const dueDateDiv = document.createElement("div");
+  dueDateDiv.className = "due-date";
+  dueDateDiv.appendChild(dueDateLabel);
+  dueDateDiv.appendChild(dueDateInput);
+
+  const completeRadioDiv = document.createElement("div");
+  completeRadioDiv.className = "complete-radio";
+
+  const incompleteLabel = document.createElement("label");
+  incompleteLabel.textContent = "Incomplete";
   const checkMarkerInput = document.createElement("input");
   checkMarkerInput.type = "radio";
   checkMarkerInput.className = "is-completed";
-  const checkMarkerLabel = document.createElement("label");
+  completeRadioDiv.appendChild(incompleteLabel);
+  completeRadioDiv.appendChild(checkMarkerInput);
 
+  const importantDiv = document.createElement("div");
+  importantDiv.className = "important-div";
+  const importantLabel = document.createElement("label");
+  importantLabel.textContent = "Important";
   const importantMarkerInput = document.createElement("input");
   importantMarkerInput.type = "radio";
   importantMarkerInput.className = "important";
+  importantDiv.appendChild(importantLabel);
+  importantDiv.appendChild(importantMarkerInput);
 
-  const todoContainer = document.createElement("div");
-  todoContainer.className = "todo-container";
+  const radioDiv = document.createElement("div");
+  radioDiv.className = "radio-div";
+  radioDiv.appendChild(completeRadioDiv);
+  radioDiv.appendChild(importantDiv);
+
+  const radioDateDiv = document.createElement("div");
+  radioDateDiv.className = "radio-date";
+  radioDateDiv.appendChild(dueDateDiv);
+  radioDateDiv.appendChild(radioDiv);
 
   todo.appendChild(titleLabel);
   todo.appendChild(titleInput);
@@ -56,12 +80,7 @@ export default function newTodo() {
   todo.appendChild(descriptionLabel);
   todo.appendChild(descriptionInput);
 
-  todo.appendChild(dueDateLabel);
-  todo.appendChild(dueDateInput);
-
-  todo.appendChild(checkMarkerInput);
-  todo.appendChild(checkMarkerLabel);
-  todo.appendChild(importantMarkerInput);
+  todo.appendChild(radioDateDiv);
 
   const button = document.createElement("button");
   button.type = "submit";
@@ -70,5 +89,4 @@ export default function newTodo() {
 
   todo.appendChild(button);
   content.appendChild(todo);
-  content.appendChild(todoContainer);
 }
