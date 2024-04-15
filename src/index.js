@@ -7,7 +7,28 @@ const test = document.createElement("h1");
 test.textContent = "This is a test";
 content.appendChild(test);
 
+const btn = document.createElement("button");
+btn.textContent = "Click me";
+btn.className = "btn";
+content.appendChild(btn);
+
 newTodo();
+(function setupModal() {
+  var modal = document.querySelector(".modal");
+  var btn = document.querySelector(".btn");
+  var span = document.getElementsByClassName("close")[0];
+  btn.onclick = function () {
+    modal.style.display = "block";
+  };
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+})();
 
 const todoContainer = document.createElement("div");
 todoContainer.className = "todo-container";

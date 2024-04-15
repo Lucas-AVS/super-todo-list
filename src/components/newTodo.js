@@ -74,6 +74,12 @@ export default function newTodo() {
   radioDateDiv.appendChild(dueDateDiv);
   radioDateDiv.appendChild(radioDiv);
 
+  const close = document.createElement("span");
+  close.className = "close";
+  close.textContent = "×";
+
+  todo.appendChild(close);
+
   todo.appendChild(titleLabel);
   todo.appendChild(titleInput);
 
@@ -88,5 +94,10 @@ export default function newTodo() {
   button.textContent = "New todo";
 
   todo.appendChild(button);
-  content.appendChild(todo);
+
+  const modal = document.createElement("div");
+  modal.className = "modal";
+
+  modal.appendChild(todo);
+  content.appendChild(modal);
 }
