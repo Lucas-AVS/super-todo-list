@@ -1,0 +1,42 @@
+.side-bar {
+    margin: 30px 0;
+    margin-left: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+
+.important-bar, .today-bar, .week-bar, .completed-bar, .new-project-bar, .project-bar{
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;    
+
+    cursor: pointer;
+}
+
+.important-bar svg, .today-bar svg, .week-bar svg, .completed-bar svg, .new-project-bar svg, .project-bar svg {
+    width: 30px;
+}
+
+.new-project-bar input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    width: 100px;
+    padding: 3px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.new-project-bar button {
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    background-color: var(--wine);
+    color: #ffffff;
+    cursor: pointer;
+}
