@@ -1,0 +1,13 @@
+.todo-header {
+  display: flex;
+  align-items: center;
+  background-color: var(--wine);
+  border-bottom: 1px solid #e9ecef;
+  padding: 5px;
+}
+
+.todo-header h1 {
+  margin: 0 auto;
+  font-size: 2.25rem;
+  color: var(--blue200);
+}
