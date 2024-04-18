@@ -3,6 +3,8 @@ import newTodo from './components/newTodo'
 import todoListHeader from './components/header'
 import sideBar from './components/sideBar'
 
+import { isToday, isThisWeek } from 'date-fns'
+
 const content = document.querySelector('.content')
 
 todoListHeader()
@@ -35,28 +37,55 @@ newTodo()
   }
 })()
 
-const todoContainer = document.createElement('div')
-todoContainer.className = 'todo-container'
-content.appendChild(todoContainer)
+const sideBarContainer = document.querySelector('.side-bar')
+const sideBarDivs = sideBarContainer.querySelectorAll('div')
 
+sideBarDivs.forEach((div) => {
+  const todoContainer = document.createElement('div')
+  todoContainer.className = div.className
+
+  // set current todo section
+  div.addEventListener('click', () => {
+    const activeDiv = document.getElementById('active')
+    if (activeDiv) {
+      activeDiv.removeAttribute('id')
+      content.removeChild(
+        document.querySelector(`.${currentSection.className}`)
+      )
+    }
+    div.id = 'active'
+    currentSection = div.className
+  })
+})
+
+const allTodos = document.querySelector('.allTodosBar')
+allTodos.setAttribute('id', 'active')
+
+let currentSection = document.querySelector('#active')
+currentSection = currentSection.className
+content.appendChild(document.querySelector(`.${currentSection}`))
+
+// initialize todoList and retrieve previous todoList from local storage
 let todoList = []
-function initialTodo() {
+function LoadTodos() {
   const storedTodoList = JSON.parse(localStorage.getItem('todoList'))
   todoList = storedTodoList === null ? [] : storedTodoList
-  console.log(todoList)
 }
-initialTodo()
+LoadTodos()
 
 // button add todo
 const dueDateInput = document.querySelector('#due-date-input')
 const titleInput = document.querySelector('#title-input')
 const descriptionInput = document.querySelector('#description-input')
+const importantRadio = document.querySelector('.important')
 
 class todoClass {
-  constructor(tittle, description, dueDate) {
+  constructor(tittle, description, dueDate, important, isCompleted) {
     this.tittle = tittle
     this.description = description
     this.dueDate = dueDate
+    this.important = important
+    this.isCompleted = isCompleted
   }
 }
 
@@ -64,7 +93,9 @@ function createTodo() {
   const todo = new todoClass(
     titleInput.value,
     descriptionInput.value,
-    dueDateInput.value
+    dueDateInput.value,
+    importantRadio.checked,
+    false
   )
 
   todoList.push(todo)
@@ -74,6 +105,7 @@ function createTodo() {
   titleInput.value = ''
   descriptionInput.value = ''
   dueDateInput.value = ''
+  importantRadio.checked = false
 }
 
 const button = document.querySelector('.submit-form')
@@ -81,8 +113,8 @@ button.addEventListener('click', createTodo)
 // ------------------------------
 
 function displayTodo() {
-  while (todoContainer.firstChild) {
-    todoContainer.removeChild(todoContainer.firstChild)
+  while (currentSection.firstChild) {
+    currentSection.removeChild(currentSection.firstChild)
   }
   todoList.forEach((todo, index) => {
     const newTodo = document.createElement('div')
@@ -94,15 +126,43 @@ function displayTodo() {
     const todoDescription = document.createElement('p')
     todoDescription.textContent = todo.description
 
+    const todoDueDate = document.createElement('p')
+    const dueDate = new Date(todo.dueDate)
+
+    // Check date
+    if (isToday(dueDate)) {
+      todoDueDate.textContent = 'Today'
+    } else if (isThisWeek(dueDate)) {
+      todoDueDate.textContent = 'This Week'
+    } else {
+      todoDueDate.textContent = todo.dueDate
+    }
+
+    const important = document.createElement('i')
+    important.className = 'fas fa-star'
+
     const todoButton = document.createElement('button')
     todoButton.textContent = 'Delete'
     todoButton.id = `todo-${index}`
     todoButton.addEventListener('click', () => deleteTodo(index))
 
+    todo.important ? newTodo.appendChild(important) : null
     newTodo.appendChild(todoTitle)
     newTodo.appendChild(todoDescription)
     newTodo.appendChild(todoButton)
-    todoContainer.appendChild(newTodo)
+
+    todo.important
+      ? document.querySelector('.importantBar').appendChild(newTodo)
+      : null
+    todo.dueDate === 'today'
+      ? document.querySelector('.todayBar').appendChild(newTodo)
+      : null
+    todo.dueDate === 'thisWeek'
+      ? document.querySelector('.thisWeekBar').appendChild(newTodo)
+      : null
+    allTodos.appendChild(newTodo)
+
+    content.appendChild(document.querySelector(`.${currentSection.className}`))
   })
 }
 
