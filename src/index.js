@@ -3,7 +3,7 @@ import newTodo from './components/newTodo'
 import todoListHeader from './components/header'
 import sideBar from './components/sideBar'
 
-import { isToday, isThisWeek } from 'date-fns'
+import { isToday, isThisWeek, parseISO } from 'date-fns'
 
 const content = document.querySelector('.content')
 
@@ -18,6 +18,10 @@ const btn = document.createElement('button')
 btn.textContent = 'Click me'
 btn.className = 'btn'
 content.appendChild(btn)
+
+const main = document.createElement('main')
+main.classList.add('main')
+content.appendChild(main)
 
 newTodo()
 ;(function setupModal() {
@@ -40,38 +44,45 @@ newTodo()
 const sideBarContainer = document.querySelector('.side-bar')
 const sideBarDivs = sideBarContainer.querySelectorAll('div')
 
-sideBarDivs.forEach((div) => {
-  const todoContainer = document.createElement('div')
-  todoContainer.className = div.className
+const allTodos = document.querySelector('.allTodosBar')
+allTodos.setAttribute('id', 'active')
+let currentSection = document.querySelector('#active')
+currentSection = currentSection.className.split(' ')[0]
 
-  // set current todo section
+// create objects for each todo bar section
+sideBarDivs.forEach((div) => {
   div.addEventListener('click', () => {
     const activeDiv = document.getElementById('active')
-    if (activeDiv) {
+    if (div !== activeDiv) {
+      div.id = 'active'
+      currentSection = div.className.split(' ')[0] // Use only the first class
       activeDiv.removeAttribute('id')
-      content.removeChild(
-        document.querySelector(`.${currentSection.className}`)
-      )
     }
     div.id = 'active'
-    currentSection = div.className
+    currentSection = div.className.split(' ')[0] // Use only the first class
+    displayTodo()
   })
 })
 
-const allTodos = document.querySelector('.allTodosBar')
-allTodos.setAttribute('id', 'active')
-
-let currentSection = document.querySelector('#active')
-currentSection = currentSection.className
-content.appendChild(document.querySelector(`.${currentSection}`))
-
-// initialize todoList and retrieve previous todoList from local storage
-let todoList = []
+let todoContainers = {}
+sideBarDivs.forEach((div) => {
+  const className = div.className.split(' ')[0] // took only the first class name
+  todoContainers[className] = []
+})
 function LoadTodos() {
-  const storedTodoList = JSON.parse(localStorage.getItem('todoList'))
-  todoList = storedTodoList === null ? [] : storedTodoList
+  const storedTodoContainers = JSON.parse(
+    localStorage.getItem('todoContainers')
+  )
+  if (storedTodoContainers !== null) {
+    todoContainers = {
+      ...todoContainers, // Stay with the default values to maintain todos sections
+      ...storedTodoContainers, // Add the stored values
+    }
+  }
 }
 LoadTodos()
+
+console.log(todoContainers)
 
 // button add todo
 const dueDateInput = document.querySelector('#due-date-input')
@@ -97,9 +108,35 @@ function createTodo() {
     importantRadio.checked,
     false
   )
+  todo.id = Date.now() // unique ID
 
-  todoList.push(todo)
-  localStorage.setItem('todoList', JSON.stringify(todoList))
+  // Only add the todo to a custom sections when it's active
+  if (
+    document.querySelector('#active').className.split(' ')[0] !==
+      'importantBar' &&
+    document.querySelector('#active').className.split(' ')[0] !==
+      'allTodosBar' &&
+    document.querySelector('#active').className.split(' ')[0] !== 'todayBar' &&
+    document.querySelector('#active').className.split(' ')[0] !== 'thisWeekBar'
+  ) {
+    todoContainers[currentSection].push(todo)
+  }
+
+  // Verify if the todo is important, today or this week
+  const dueDate = parseISO(todo.dueDate)
+  if (isToday(dueDate)) {
+    todoContainers.todayBar.push(todo)
+  }
+  if (isThisWeek(dueDate)) {
+    todoContainers.thisWeekBar.push(todo)
+  }
+  if (todo.important) {
+    todoContainers.importantBar.push(todo)
+  }
+
+  todoContainers.allTodosBar.push(todo)
+
+  localStorage.setItem('todoContainers', JSON.stringify(todoContainers))
 
   displayTodo()
   titleInput.value = ''
@@ -109,68 +146,59 @@ function createTodo() {
 }
 
 const button = document.querySelector('.submit-form')
-button.addEventListener('click', createTodo)
+button.addEventListener('click', function (event) {
+  event.preventDefault()
+  createTodo()
+})
 // ------------------------------
 
 function displayTodo() {
-  while (currentSection.firstChild) {
-    currentSection.removeChild(currentSection.firstChild)
+  main.innerHTML = ''
+  console.log(todoContainers[currentSection])
+  if (todoContainers[currentSection]) {
+    todoContainers[currentSection].forEach((todo, index) => {
+      console.log(todo)
+      const newTodo = document.createElement('div')
+      newTodo.className = `${todo.tittle}-${index}`
+
+      const todoTitle = document.createElement('h2')
+      todoTitle.textContent = todo.tittle
+
+      if (todo.important) {
+        const important = document.createElement('i')
+        important.classList.add('fas', 'fa-star')
+        todoTitle.appendChild(important)
+      }
+
+      const todoDescription = document.createElement('h3')
+      todoDescription.textContent = todo.description
+
+      const todoDueDate = document.createElement('p')
+      todoDueDate.textContent = `Due Date: ${todo.dueDate}`
+
+      const todoButton = document.createElement('button')
+      todoButton.textContent = 'Delete'
+      todoButton.addEventListener('click', () => deleteTodo(todo.id))
+
+      newTodo.appendChild(todoTitle)
+      newTodo.appendChild(todoDescription)
+      newTodo.appendChild(todoDueDate)
+      newTodo.appendChild(todoButton)
+
+      main.appendChild(newTodo)
+    })
   }
-  todoList.forEach((todo, index) => {
-    const newTodo = document.createElement('div')
-    newTodo.className = `todo-${index}`
-
-    const todoTitle = document.createElement('h2')
-    todoTitle.textContent = todo.tittle
-
-    const todoDescription = document.createElement('p')
-    todoDescription.textContent = todo.description
-
-    const todoDueDate = document.createElement('p')
-    const dueDate = new Date(todo.dueDate)
-
-    // Check date
-    if (isToday(dueDate)) {
-      todoDueDate.textContent = 'Today'
-    } else if (isThisWeek(dueDate)) {
-      todoDueDate.textContent = 'This Week'
-    } else {
-      todoDueDate.textContent = todo.dueDate
-    }
-
-    const important = document.createElement('i')
-    important.className = 'fas fa-star'
-
-    const todoButton = document.createElement('button')
-    todoButton.textContent = 'Delete'
-    todoButton.id = `todo-${index}`
-    todoButton.addEventListener('click', () => deleteTodo(index))
-
-    todo.important ? newTodo.appendChild(important) : null
-    newTodo.appendChild(todoTitle)
-    newTodo.appendChild(todoDescription)
-    newTodo.appendChild(todoButton)
-
-    todo.important
-      ? document.querySelector('.importantBar').appendChild(newTodo)
-      : null
-    todo.dueDate === 'today'
-      ? document.querySelector('.todayBar').appendChild(newTodo)
-      : null
-    todo.dueDate === 'thisWeek'
-      ? document.querySelector('.thisWeekBar').appendChild(newTodo)
-      : null
-    allTodos.appendChild(newTodo)
-
-    content.appendChild(document.querySelector(`.${currentSection.className}`))
-  })
 }
 
 displayTodo()
 
-function deleteTodo(index) {
-  const newTodoList = todoList.filter((_, todoIndex) => todoIndex !== index)
-  todoList = newTodoList
-  localStorage.setItem('todoList', JSON.stringify(todoList))
+function deleteTodo(id) {
+  // Loop over all arrays in todoContainers
+  for (let key in todoContainers) {
+    // Filter out the todo with the specified ID
+    todoContainers[key] = todoContainers[key].filter((todo) => todo.id !== id)
+  }
+
+  localStorage.setItem('todoContainers', JSON.stringify(todoContainers))
   displayTodo()
 }
