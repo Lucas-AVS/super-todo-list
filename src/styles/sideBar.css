@@ -7,7 +7,7 @@
     gap: 5px;
 }
 
-.important-bar, .today-bar, .week-bar, .completed-bar, .new-project-bar, .project-bar{
+.importantBar, .todayBar, .thisWeekBar, .completedBar, .newProjectBar, .projectBar, .allTodosBar{
     font-size: 1.25rem;
     display: flex;
     align-items: center;
@@ -16,7 +16,7 @@
     cursor: pointer;
 }
 
-.important-bar svg, .today-bar svg, .week-bar svg, .completed-bar svg, .new-project-bar svg, .project-bar svg {
+.importantBar svg, .todayBar svg, .thisWeekBar svg, .completedBar svg, .newProjectBar svg, .projectBar svg, .allTodosBar svg {
     width: 30px;
 }
 
@@ -39,4 +39,10 @@
     background-color: var(--wine);
     color: #ffffff;
     cursor: pointer;
+}
+
+#active {
+    background-color: var(--wine);
+    color: #ffffff;
+    width: calc(100% - 50px);
 }
