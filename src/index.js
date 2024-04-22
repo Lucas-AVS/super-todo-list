@@ -62,6 +62,9 @@ currentSection = currentSection.className.split(' ')[0]
 sideBarDivs.forEach((div) => {
   div.addEventListener('click', () => {
     const activeDiv = document.getElementById('active')
+    if (div.className === 'newProjectBar') {
+      return
+    }
     if (div !== activeDiv) {
       div.id = 'active'
       currentSection = div.className.split(' ')[0] // Use only the first class
