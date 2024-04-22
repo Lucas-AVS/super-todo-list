@@ -21,54 +21,92 @@
 body {
   font-family: 'TiltNeon';
   line-height: 1.6;
-  background-color: var(--blue900);
   color: var(--white);
   -webkit-font-smoothing: 'antialiased';
 }
 
-/* .content {
-  display: flex;
-} */
-
 .main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh
+}
+
+.display-modal {
   color: var(--blue900);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.todo-column {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  gap: 20px;
   padding-inline-start: 0;
   width: 270px;
-  display: grid;
-  grid-gap: 30px;
-  grid-template-columns: auto;
   padding-bottom: 80px;
   margin: 30px auto 0 auto;
 }
 
-.main div {
-  padding: 15px;
+.display-modal-button {
   background-color: var(--blue200);
+  border: none;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 10px;
+  font-size: 2rem;
+  border-radius: 3px;
+  transition: 0.3s;
+}
+
+.display-modal-button:hover {
+  background-color: var(--wine);
+  color: var(--white);
+  font-weight: bold;
+}
+
+.todo-container {
+  color: var(--blue200);
+  background-color: var(--white);
+  display: grid;
+  grid-gap: 30px;
+  grid-template-columns: auto;
+}
+
+.todo-container div {
+  height: 400px;
+
+  padding: 15px;
+  background-color: var(--blue900);
   display: flex;
   flex-direction: column;
-  border-radius: 3px;
+  border-radius: 9px;
   gap: 12px;
   align-items: center;
   justify-content: center;
 }
 
-.main div h2 {
+.todo-container div h2 {
+  color: var(--white);
   font-size: 1.75rem;
   font-weight: bold;
   margin: 0;
 }
 
-.main div h3 {
+.todo-container div h3 {
   font-size: 1.5rem;
   font-weight: normal;
   margin: 0;
 }
 
-.main div p {
+.todo-container div p {
   font-size: 1rem;
 }
 
-.main div button {
+.todo-container div button {
+  background-color: var(--yellow);
   border: none;
   outline: none;
   box-shadow: none;
@@ -82,15 +120,24 @@ body {
   font-size: 1.5rem;
 }
 
-.main div button:hover {
-  background-color: var(--yellow);
+.todo-container div button:hover {
+  background-color: var(--wine);
 }
+  @media (min-width: 900px) {
+    .main {
+      display: flex;
+      flex-direction: row;
+    }
+  }
 
   @media (min-width: 600px) {
-    .main {
+    .todo-column {
       padding-inline-start: 0;
       margin: 60px auto 0 auto;
       width: 540px;
+    }
+
+    .todo-container {
       display: grid;
       grid-gap: 40px;
       grid-template-columns: 250px 250px;
@@ -98,11 +145,14 @@ body {
     }
   }
   
-  @media (min-width: 1100px) {
-    .main {
+  @media (min-width: 1460px) {
+    .todo-column {
       padding-inline-start: 0;
       margin: 70px auto 0 auto;
       width: 960px;
+    }
+
+    .todo-container {
       display: grid;
       grid-gap: 60px;
       grid-template-columns: 280px 280px 280px;
