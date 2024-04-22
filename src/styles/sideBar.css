@@ -1,6 +1,7 @@
 .side-bar {
-    margin: 30px 0;
-    margin-left: 25px;
+    padding: 30px 0;
+    padding-left: 25px;
+    background-color: var(--blue900);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,3 +47,11 @@
     color: #ffffff;
     width: calc(100% - 50px);
 }
+
+@media (min-width: 900px) {
+    .side-bar {
+        width: 450px;
+        height: 100vh;
+        justify-content: flex-start;
+    }
+  }
