@@ -8,27 +8,36 @@ import { isToday, isThisWeek, parseISO } from 'date-fns'
 const content = document.querySelector('.content')
 
 todoListHeader()
-sideBar()
-
-const test = document.createElement('h1')
-test.textContent = 'This is a test'
-content.appendChild(test)
-
-const btn = document.createElement('button')
-btn.textContent = 'Click me'
-btn.className = 'btn'
-content.appendChild(btn)
 
 const main = document.createElement('main')
 main.classList.add('main')
 content.appendChild(main)
 
+sideBar()
+
+const todoColumn = document.createElement('div')
+todoColumn.classList.add('todo-column')
+main.appendChild(todoColumn)
+
+const displayModal = document.createElement('div')
+displayModal.classList.add('display-modal')
+const displayModalButton = document.createElement('button')
+displayModalButton.className = 'display-modal-button'
+displayModalButton.textContent = 'New Todo'
+displayModal.appendChild(displayModalButton)
+
+todoColumn.appendChild(displayModal)
+
+const todoContainer = document.createElement('div')
+todoContainer.classList.add('todo-container')
+todoColumn.appendChild(todoContainer)
+
 newTodo()
 ;(function setupModal() {
   var modal = document.querySelector('.modal')
-  var btn = document.querySelector('.btn')
+  var displayModalButton = document.querySelector('.display-modal-button')
   var span = document.getElementsByClassName('close')[0]
-  btn.onclick = function () {
+  displayModalButton.onclick = function () {
     modal.style.display = 'block'
   }
   span.onclick = function () {
@@ -64,25 +73,23 @@ sideBarDivs.forEach((div) => {
   })
 })
 
-let todoContainers = {}
+let todoList = {}
 sideBarDivs.forEach((div) => {
   const className = div.className.split(' ')[0] // took only the first class name
-  todoContainers[className] = []
+  todoList[className] = []
 })
 function LoadTodos() {
-  const storedTodoContainers = JSON.parse(
-    localStorage.getItem('todoContainers')
-  )
-  if (storedTodoContainers !== null) {
-    todoContainers = {
-      ...todoContainers, // Stay with the default values to maintain todos sections
-      ...storedTodoContainers, // Add the stored values
+  const storedtodoList = JSON.parse(localStorage.getItem('todoList'))
+  if (storedtodoList !== null) {
+    todoList = {
+      ...todoList, // Stay with the default values to maintain todos sections
+      ...storedtodoList, // Add the stored values
     }
   }
 }
 LoadTodos()
 
-console.log(todoContainers)
+console.log(todoList)
 
 // button add todo
 const dueDateInput = document.querySelector('#due-date-input')
@@ -108,6 +115,12 @@ function createTodo() {
     importantRadio.checked,
     false
   )
+
+  if (todo.tittle === '' || todo.description === '' || todo.dueDate === '') {
+    alert('Please fill all the fields')
+    return
+  }
+
   todo.id = Date.now() // unique ID
 
   // Only add the todo to a custom sections when it's active
@@ -119,30 +132,34 @@ function createTodo() {
     document.querySelector('#active').className.split(' ')[0] !== 'todayBar' &&
     document.querySelector('#active').className.split(' ')[0] !== 'thisWeekBar'
   ) {
-    todoContainers[currentSection].push(todo)
+    todoList[currentSection].push(todo)
   }
 
   // Verify if the todo is important, today or this week
   const dueDate = parseISO(todo.dueDate)
   if (isToday(dueDate)) {
-    todoContainers.todayBar.push(todo)
+    todoList.todayBar.push(todo)
   }
   if (isThisWeek(dueDate)) {
-    todoContainers.thisWeekBar.push(todo)
+    todoList.thisWeekBar.push(todo)
   }
   if (todo.important) {
-    todoContainers.importantBar.push(todo)
+    todoList.importantBar.push(todo)
   }
 
-  todoContainers.allTodosBar.push(todo)
+  todoList.allTodosBar.push(todo)
 
-  localStorage.setItem('todoContainers', JSON.stringify(todoContainers))
+  localStorage.setItem('todoList', JSON.stringify(todoList))
 
   displayTodo()
   titleInput.value = ''
   descriptionInput.value = ''
   dueDateInput.value = ''
   importantRadio.checked = false
+
+  //close modal
+  let modal = document.querySelector('.modal')
+  modal.style.display = 'none'
 }
 
 const button = document.querySelector('.submit-form')
@@ -151,12 +168,16 @@ button.addEventListener('click', function (event) {
   createTodo()
 })
 // ------------------------------
+const sideBarDiv = document.querySelector('.side-bar')
+function adjustSidebarHeight() {
+  sideBarDiv.style.height = '120vh' // set the sidebar height to match the content element height
+}
 
 function displayTodo() {
-  main.innerHTML = ''
-  console.log(todoContainers[currentSection])
-  if (todoContainers[currentSection]) {
-    todoContainers[currentSection].forEach((todo, index) => {
+  todoContainer.innerHTML = ''
+  console.log(todoList[currentSection])
+  if (todoList[currentSection]) {
+    todoList[currentSection].forEach((todo, index) => {
       console.log(todo)
       const newTodo = document.createElement('div')
       newTodo.className = `${todo.tittle}-${index}`
@@ -185,20 +206,21 @@ function displayTodo() {
       newTodo.appendChild(todoDueDate)
       newTodo.appendChild(todoButton)
 
-      main.appendChild(newTodo)
+      todoContainer.appendChild(newTodo)
     })
   }
+  adjustSidebarHeight()
 }
 
 displayTodo()
 
 function deleteTodo(id) {
-  // Loop over all arrays in todoContainers
-  for (let key in todoContainers) {
+  // Loop over all arrays in todoList
+  for (let key in todoList) {
     // Filter out the todo with the specified ID
-    todoContainers[key] = todoContainers[key].filter((todo) => todo.id !== id)
+    todoList[key] = todoList[key].filter((todo) => todo.id !== id)
   }
 
-  localStorage.setItem('todoContainers', JSON.stringify(todoContainers))
+  localStorage.setItem('todoList', JSON.stringify(todoList))
   displayTodo()
 }
