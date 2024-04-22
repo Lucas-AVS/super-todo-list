@@ -5,9 +5,9 @@ import '@fortawesome/fontawesome-free/js/regular'
 import '@fortawesome/fontawesome-free/js/brands'
 
 export default function sideBar() {
-  const content = document.querySelector('.content')
-  const mainDiv = document.createElement('div')
-  mainDiv.classList.add('side-bar')
+  const main = document.querySelector('.main')
+  const sideBarDiv = document.createElement('div')
+  sideBarDiv.classList.add('side-bar')
 
   function createElements(iconClasses, text) {
     const div = document.createElement('div')
@@ -17,7 +17,7 @@ export default function sideBar() {
     div.appendChild(i)
     const t = document.createTextNode(text)
     div.appendChild(t)
-    mainDiv.appendChild(div)
+    sideBarDiv.appendChild(div)
   }
 
   createElements(['fas', 'fa-star'], 'important')
@@ -40,7 +40,7 @@ export default function sideBar() {
   createButton.classList.add('create-button')
   createButton.textContent = 'Create'
   newProjectDiv.appendChild(createButton)
-  mainDiv.appendChild(newProjectDiv)
+  sideBarDiv.appendChild(newProjectDiv)
 
   // Load custom projects from localsotrage
   let customProjects = JSON.parse(localStorage.getItem('customProjects')) || []
@@ -59,5 +59,5 @@ export default function sideBar() {
 
   // Append all the divs to the main div
 
-  content.appendChild(mainDiv)
+  main.appendChild(sideBarDiv)
 }
