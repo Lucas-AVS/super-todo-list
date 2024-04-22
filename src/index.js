@@ -148,7 +148,10 @@ function createTodo() {
   }
 
   todoList.allTodosBar.push(todo)
-
+  // Sort the todos by due date
+  for (let key in todoList) {
+    todoList[key].sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+  }
   localStorage.setItem('todoList', JSON.stringify(todoList))
 
   displayTodo()
